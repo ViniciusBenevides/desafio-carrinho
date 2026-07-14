@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: carrinho
+    ports:
+      - '5432:5432'
+    volumes:
+      - dados_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d carrinho']
+      interval: 3s
+      timeout: 3s
+      retries: 15
+
+  api:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/carrinho?schema=public
+      PORT: 3001
+    ports:
+      - '3001:3001'
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        # URL da API vista pelo NAVEGADOR (não pelo container)
+        VITE_API_URL: http://localhost:3001
+    ports:
+      - '5173:80'
+    depends_on:
+      - api
+
+volumes:
+  dados_pg:
