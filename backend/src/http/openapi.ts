@@ -9,6 +9,17 @@ const erroPadrao = {
       properties: {
         codigo: { type: 'string', example: 'ESTOQUE_INSUFICIENTE' },
         mensagem: { type: 'string' },
+        detalhes: {
+          type: 'array',
+          description: 'Presente apenas em erros de validação da requisição (REQUISICAO_INVALIDA)',
+          items: {
+            type: 'object',
+            properties: {
+              campo: { type: 'string' },
+              problema: { type: 'string' },
+            },
+          },
+        },
       },
     },
   },
@@ -156,7 +167,7 @@ export const documentoOpenApi = {
         },
         responses: {
           201: respostaCarrinho('Item adicionado; totais recalculados'),
-          400: respostaErro('Quantidade inválida (menor ou igual a zero)'),
+          400: respostaErro('Quantidade inválida (menor ou igual a zero) ou requisição malformada'),
           404: respostaErro('Carrinho ou produto não encontrado'),
           409: respostaErro('Carrinho já finalizado'),
           422: respostaErro('Estoque insuficiente'),
@@ -182,7 +193,7 @@ export const documentoOpenApi = {
         },
         responses: {
           200: respostaCarrinho('Quantidade substituída; totais recalculados'),
-          400: respostaErro('Quantidade inválida (menor ou igual a zero)'),
+          400: respostaErro('Quantidade inválida (menor ou igual a zero) ou requisição malformada'),
           404: respostaErro('Carrinho ou item não encontrado'),
           409: respostaErro('Carrinho já finalizado'),
           422: respostaErro('Estoque insuficiente'),
@@ -218,6 +229,7 @@ export const documentoOpenApi = {
         },
         responses: {
           200: respostaCarrinho('Cupom aplicado; totais recalculados'),
+          400: respostaErro('Requisição malformada (codigoCupom ausente ou vazio)'),
           404: respostaErro('Carrinho não encontrado'),
           409: respostaErro('Carrinho já finalizado'),
           422: respostaErro('Cupom inválido ou inexistente'),

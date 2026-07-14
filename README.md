@@ -33,8 +33,8 @@ Requisitos: Node.js 20+ e um PostgreSQL acessível.
 
 > **Não tem PostgreSQL instalado?** O projeto inclui um Postgres embarcado
 > (binários baixados pelo npm, nada é instalado na máquina):
-> `cd backend && npm run db:embedded` — ele sobe em `localhost:5433`,
-> que é exatamente o que o `.env.example` do backend espera na porta configurada abaixo.
+> `cd backend && npm run db:embedded` — ele sobe em `localhost:5433`.
+> Nesse caso, use no `.env` a URL indicada no comentário do passo abaixo (porta **5433**).
 
 **Back-end:**
 
@@ -154,7 +154,11 @@ Toda falha de negócio retorna `{ "erro": { "codigo", "mensagem" } }`:
 6. **`deleteMany` + `createMany` ao salvar itens.** O repositório persiste o
    estado completo do carrinho numa transação. Para carrinhos de e-commerce
    (dezenas de itens no máximo) é simples e correto; com volume real, trocaria
-   por *diff* de itens sem tocar nas outras camadas.
+   por *diff* de itens sem tocar nas outras camadas. O fluxo
+   carregar → regra de domínio → salvar assume **um cliente por carrinho**
+   (sem lock): requisições simultâneas no mesmo carrinho podem se sobrescrever.
+   A evolução natural — lock otimista com coluna `version` — está listada em
+   "com mais tempo" e ficaria contida no repositório.
 
 7. **Cupom sobre o subtotal.** Percentual aplicado ao subtotal, como pede o
    enunciado; troca de cupom substitui o anterior (apenas um ativo), e cupom

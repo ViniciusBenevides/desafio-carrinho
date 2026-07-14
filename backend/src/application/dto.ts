@@ -22,7 +22,7 @@ export function cupomParaDto(cupom: Cupom) {
   return {
     id: cupom.id,
     codigoCupom: cupom.codigoCupom,
-    percentualDesconto: cupom.percentualDesconto.toNumber(),
+    percentualDesconto: paraNumero(cupom.percentualDesconto),
   };
 }
 
@@ -41,6 +41,3 @@ export function carrinhoParaDto(carrinho: Carrinho) {
     total: paraNumero(carrinho.total),
   };
 }
-
-export type ProdutoDto = ReturnType<typeof produtoParaDto>;
-export type CarrinhoDto = ReturnType<typeof carrinhoParaDto>;

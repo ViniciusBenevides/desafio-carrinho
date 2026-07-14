@@ -14,7 +14,7 @@ export function arredondar(valor: Decimal): Decimal {
   return valor.toDecimalPlaces(2, Decimal.ROUND_HALF_UP);
 }
 
-export function calcularPrecoItem(precoLiquidoUnitario: Decimal, quantidade: number): Decimal {
+function calcularPrecoItem(precoLiquidoUnitario: Decimal, quantidade: number): Decimal {
   return arredondar(precoLiquidoUnitario.times(quantidade));
 }
 

@@ -21,7 +21,7 @@ function iconeDoProduto(descricao: string): string {
 interface Props {
   produtos: Produto[];
   quantidadePorProduto: Map<number, number>;
-  carrinhoFinalizado: boolean | undefined;
+  carrinhoFinalizado: boolean;
   ocupado: boolean;
   aoAdicionar: (produtoId: number) => void;
 }
