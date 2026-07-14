@@ -15,11 +15,12 @@ RUN npm run build
 # ---- runtime ----
 FROM node:22-alpine
 WORKDIR /app
-ENV NODE_ENV=production
 
-# dependências completas: o CLI do Prisma (migrate/seed) e o tsx são usados no start
+# dependências completas (inclui dev): o CLI do Prisma (migrate/seed) e o tsx são usados no start.
+# NODE_ENV=production só depois do npm ci, senão o npm omitiria as devDependencies.
 COPY package*.json ./
 RUN npm ci
+ENV NODE_ENV=production
 
 COPY prisma ./prisma
 RUN npx prisma generate

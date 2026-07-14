@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { api, ApiError } from './api';
 import { Cabecalho } from './componentes/Cabecalho';
 import { CatalogoProdutos } from './componentes/CatalogoProdutos';
@@ -16,6 +16,7 @@ export default function App() {
   const [drawerAberto, setDrawerAberto] = useState(false);
   const [carregando, setCarregando] = useState(true);
   const [falhaDeConexao, setFalhaDeConexao] = useState(false);
+  const inicializado = useRef(false);
 
   const notificarErro = useCallback((erro: unknown) => {
     const mensagem = erro instanceof ApiError ? erro.message : 'Algo deu errado. Tente novamente.';
@@ -29,26 +30,32 @@ export default function App() {
     return novo;
   }, []);
 
+  const restaurarOuCriarCarrinho = useCallback(async (): Promise<Carrinho> => {
+    const idSalvo = localStorage.getItem(CHAVE_CARRINHO);
+    if (idSalvo) {
+      try {
+        const existente = await api.obterCarrinho(Number(idSalvo));
+        // um carrinho finalizado em visita anterior não pode ser reutilizado
+        if (existente.status === 'ABERTO') return existente;
+      } catch {
+        /* carrinho não existe mais: cria um novo abaixo */
+      }
+    }
+    const novo = await api.criarCarrinho();
+    localStorage.setItem(CHAVE_CARRINHO, String(novo.id));
+    return novo;
+  }, []);
+
   useEffect(() => {
+    // evita corrida na dupla invocação do StrictMode (criaria dois carrinhos)
+    if (inicializado.current) return;
+    inicializado.current = true;
+
     async function carregar() {
       try {
-        const catalogo = await api.listarProdutos();
+        const [catalogo, carrinhoInicial] = await Promise.all([api.listarProdutos(), restaurarOuCriarCarrinho()]);
         setProdutos(catalogo);
-
-        const idSalvo = localStorage.getItem(CHAVE_CARRINHO);
-        if (idSalvo) {
-          try {
-            const existente = await api.obterCarrinho(Number(idSalvo));
-            // um carrinho finalizado em visita anterior não pode ser reutilizado
-            if (existente.status === 'ABERTO') {
-              setCarrinho(existente);
-              return;
-            }
-          } catch {
-            /* carrinho não existe mais: cria um novo abaixo */
-          }
-        }
-        await iniciarNovoCarrinho();
+        setCarrinho(carrinhoInicial);
       } catch (erro) {
         setFalhaDeConexao(true);
         notificarErro(erro);
@@ -57,7 +64,7 @@ export default function App() {
       }
     }
     void carregar();
-  }, [iniciarNovoCarrinho, notificarErro]);
+  }, [restaurarOuCriarCarrinho, notificarErro]);
 
   /** Executa uma operação que devolve o carrinho recalculado pela API. */
   const executar = useCallback(

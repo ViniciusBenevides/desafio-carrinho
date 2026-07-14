@@ -25,6 +25,14 @@ export function middlewareDeErros(erro: unknown, _req: Request, res: Response, _
     return;
   }
 
+  // JSON malformado rejeitado pelo express.json() é erro do cliente, não do servidor
+  if (erro instanceof SyntaxError && 'body' in erro) {
+    res.status(400).json({
+      erro: { codigo: 'REQUISICAO_INVALIDA', mensagem: 'JSON malformado no corpo da requisição.' },
+    });
+    return;
+  }
+
   if (erro instanceof ZodError) {
     res.status(400).json({
       erro: {
