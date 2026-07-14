@@ -1,0 +1,134 @@
+### ============================================================
+### API Carrinho de Compras — exemplos de chamadas
+### Compatível com a extensão REST Client (VS Code) e similares.
+### Swagger UI disponível em http://localhost:3001/docs
+### ============================================================
+
+@baseUrl = http://localhost:3001
+@carrinhoId = 1
+
+### Health check
+GET {{baseUrl}}/health
+
+### ------------------------------------------------------------
+### Catálogo
+### ------------------------------------------------------------
+
+### Listar produtos (preço líquido unitário + estoque disponível)
+GET {{baseUrl}}/produtos
+
+### ------------------------------------------------------------
+### Carrinho
+### ------------------------------------------------------------
+
+### Criar um carrinho novo (anote o id retornado em @carrinhoId)
+POST {{baseUrl}}/carrinhos
+
+### Consultar o carrinho (itens, cupom, subtotal, desconto, total)
+GET {{baseUrl}}/carrinhos/{{carrinhoId}}
+
+### ------------------------------------------------------------
+### Itens
+### ------------------------------------------------------------
+
+### Adicionar produto (quantidade opcional, padrão 1)
+POST {{baseUrl}}/carrinhos/{{carrinhoId}}/itens
+Content-Type: application/json
+
+{
+  "produtoId": 1
+}
+
+### Adicionar o MESMO produto de novo → quantidade é SOMADA (1 + 1 = 2)
+POST {{baseUrl}}/carrinhos/{{carrinhoId}}/itens
+Content-Type: application/json
+
+{
+  "produtoId": 1,
+  "quantidade": 1
+}
+
+### Adicionar outro produto com quantidade explícita
+POST {{baseUrl}}/carrinhos/{{carrinhoId}}/itens
+Content-Type: application/json
+
+{
+  "produtoId": 2,
+  "quantidade": 3
+}
+
+### Alterar quantidade EXATA (substituição: 3 → 5)
+PUT {{baseUrl}}/carrinhos/{{carrinhoId}}/itens/2
+Content-Type: application/json
+
+{
+  "quantidade": 5
+}
+
+### ERRO tratado: quantidade menor ou igual a zero (400 QUANTIDADE_INVALIDA)
+PUT {{baseUrl}}/carrinhos/{{carrinhoId}}/itens/2
+Content-Type: application/json
+
+{
+  "quantidade": 0
+}
+
+### ERRO tratado: acima do estoque (422 ESTOQUE_INSUFICIENTE — notebook tem 8)
+PUT {{baseUrl}}/carrinhos/{{carrinhoId}}/itens/1
+Content-Type: application/json
+
+{
+  "quantidade": 9
+}
+
+### Remover um produto do carrinho
+DELETE {{baseUrl}}/carrinhos/{{carrinhoId}}/itens/2
+
+### ERRO tratado: remover produto que não está no carrinho (404 ITEM_NAO_ENCONTRADO)
+DELETE {{baseUrl}}/carrinhos/{{carrinhoId}}/itens/99
+
+### ------------------------------------------------------------
+### Cupom de desconto
+### ------------------------------------------------------------
+
+### Aplicar cupom de 10%
+POST {{baseUrl}}/carrinhos/{{carrinhoId}}/cupom
+Content-Type: application/json
+
+{
+  "codigoCupom": "10OFF"
+}
+
+### Trocar pelo cupom de 15% (apenas um ativo por vez — substitui o anterior)
+POST {{baseUrl}}/carrinhos/{{carrinhoId}}/cupom
+Content-Type: application/json
+
+{
+  "codigoCupom": "15OFF"
+}
+
+### ERRO tratado: cupom inexistente (422 CUPOM_INVALIDO)
+POST {{baseUrl}}/carrinhos/{{carrinhoId}}/cupom
+Content-Type: application/json
+
+{
+  "codigoCupom": "NAOEXISTE"
+}
+
+### Remover o cupom aplicado
+DELETE {{baseUrl}}/carrinhos/{{carrinhoId}}/cupom
+
+### ------------------------------------------------------------
+### Checkout
+### ------------------------------------------------------------
+
+### Finalizar o carrinho
+POST {{baseUrl}}/carrinhos/{{carrinhoId}}/finalizar
+
+### ERRO tratado: alterar carrinho finalizado (409 CARRINHO_FINALIZADO)
+POST {{baseUrl}}/carrinhos/{{carrinhoId}}/itens
+Content-Type: application/json
+
+{
+  "produtoId": 3
+}
