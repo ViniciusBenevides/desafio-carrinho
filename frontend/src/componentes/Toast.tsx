@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { IconeAlerta, IconeCheck } from './Icones';
 
 export interface MensagemToast {
   tipo: 'erro' | 'sucesso';
@@ -18,7 +19,7 @@ export function Toast({ mensagem, aoFechar }: Props) {
 
   return (
     <div className={`toast toast-${mensagem.tipo}`} role="alert" onClick={aoFechar}>
-      <span aria-hidden="true">{mensagem.tipo === 'erro' ? '⚠' : '✓'}</span>
+      <span className="toast-icone">{mensagem.tipo === 'erro' ? <IconeAlerta /> : <IconeCheck />}</span>
       {mensagem.mensagem}
     </div>
   );

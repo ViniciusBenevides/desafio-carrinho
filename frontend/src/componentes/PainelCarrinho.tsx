@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from 'react';
 import { formatarBRL } from '../api';
 import type { Carrinho } from '../tipos';
+import { IconeCheck, IconeCupom, IconeFechar, IconeLixeira } from './Icones';
+import { IlustracaoProduto } from './Ilustracoes';
 
 interface Props {
   carrinho: Carrinho;
@@ -30,6 +32,7 @@ export function PainelCarrinho({
   const [codigoCupom, setCodigoCupom] = useState('');
   const finalizado = carrinho.status === 'FINALIZADO';
   const vazio = carrinho.itens.length === 0;
+  const totalDeItens = carrinho.itens.reduce((soma, item) => soma + item.quantidade, 0);
 
   function enviarCupom(evento: FormEvent) {
     evento.preventDefault();
@@ -42,81 +45,89 @@ export function PainelCarrinho({
 
   return (
     <>
-      {aberto && <div className="pano-de-fundo" onClick={aoFechar} aria-hidden="true" />}
+      <div className={`pano-de-fundo${aberto ? ' visivel' : ''}`} onClick={aoFechar} aria-hidden="true" />
 
-      <aside className={`painel-carrinho${aberto ? ' painel-aberto' : ''}`} aria-label="Carrinho de compras">
+      <aside className={`painel-carrinho${aberto ? ' painel-aberto' : ''}`} aria-label="Carrinho de compras" aria-hidden={!aberto}>
         <div className="painel-topo">
           <h2>
             {finalizado ? 'Pedido confirmado' : 'Seu carrinho'}
-            <span className="painel-id">#{carrinho.id}</span>
+            {!finalizado && totalDeItens > 0 && <span className="painel-contagem">{totalDeItens}</span>}
           </h2>
           <button type="button" className="botao-fechar" onClick={aoFechar} aria-label="Fechar carrinho">
-            ×
+            <IconeFechar />
           </button>
         </div>
 
         {finalizado && (
           <div className="confirmacao">
-            <span className="confirmacao-icone" aria-hidden="true">
-              ✓
+            <span className="confirmacao-icone">
+              <IconeCheck />
             </span>
-            <p>
-              Compra finalizada! O carrinho <strong>#{carrinho.id}</strong> foi fechado e não pode mais ser alterado.
-            </p>
+            <div>
+              <strong>Compra finalizada!</strong>
+              <p>
+                O pedido <strong>#{carrinho.id}</strong> foi fechado e não pode mais ser alterado.
+              </p>
+            </div>
           </div>
         )}
 
         {vazio && !finalizado ? (
-          <p className="carrinho-vazio">
-            Seu carrinho está vazio.
-            <br />
-            Adicione produtos do catálogo ao lado.
-          </p>
+          <div className="carrinho-vazio">
+            <p>
+              <strong>Seu carrinho está vazio.</strong>
+            </p>
+            <p>Adicione produtos do catálogo para começar.</p>
+          </div>
         ) : (
           <ul className="lista-itens">
             {carrinho.itens.map((item) => (
               <li className="item-carrinho" key={item.produto.id}>
-                <div className="item-cabeca">
-                  <span className="item-nome">{item.produto.descricaoProduto}</span>
-                  {!finalizado && (
-                    <button
-                      type="button"
-                      className="botao-remover"
-                      disabled={ocupado}
-                      onClick={() => aoRemoverItem(item.produto.id)}
-                      aria-label={`Remover ${item.produto.descricaoProduto}`}
-                    >
-                      remover
-                    </button>
-                  )}
+                <div className="item-miniatura">
+                  <IlustracaoProduto descricao={item.produto.descricaoProduto} className="item-ilustracao" />
                 </div>
 
-                <div className="item-rodape">
-                  {finalizado ? (
-                    <span className="item-qtd-fixa">{item.quantidade} un.</span>
-                  ) : (
-                    <div className="seletor-quantidade" aria-label="Quantidade">
+                <div className="item-detalhes">
+                  <div className="item-cabeca">
+                    <span className="item-nome">{item.produto.descricaoProduto}</span>
+                    {!finalizado && (
                       <button
                         type="button"
-                        disabled={ocupado || item.quantidade <= 1}
-                        onClick={() => aoAlterarQuantidade(item.produto.id, item.quantidade - 1)}
-                        aria-label="Diminuir quantidade"
+                        className="botao-remover-item"
+                        disabled={ocupado}
+                        onClick={() => aoRemoverItem(item.produto.id)}
+                        aria-label={`Remover ${item.produto.descricaoProduto}`}
                       >
-                        −
+                        <IconeLixeira />
                       </button>
-                      <span className="quantidade">{item.quantidade}</span>
-                      <button
-                        type="button"
-                        disabled={ocupado || item.quantidade >= item.produto.quantidadeEstoque}
-                        onClick={() => aoAlterarQuantidade(item.produto.id, item.quantidade + 1)}
-                        aria-label="Aumentar quantidade"
-                      >
-                        +
-                      </button>
-                    </div>
-                  )}
-                  <div className="item-precos">
-                    <span className="item-unitario">{formatarBRL(item.produto.precoLiquido)} / un.</span>
+                    )}
+                  </div>
+                  <span className="item-unitario">{formatarBRL(item.produto.precoLiquido)} cada</span>
+
+                  <div className="item-rodape">
+                    {finalizado ? (
+                      <span className="item-qtd-fixa">{item.quantidade} un.</span>
+                    ) : (
+                      <div className="seletor-quantidade" aria-label="Quantidade">
+                        <button
+                          type="button"
+                          disabled={ocupado || item.quantidade <= 1}
+                          onClick={() => aoAlterarQuantidade(item.produto.id, item.quantidade - 1)}
+                          aria-label="Diminuir quantidade"
+                        >
+                          −
+                        </button>
+                        <span className="quantidade">{item.quantidade}</span>
+                        <button
+                          type="button"
+                          disabled={ocupado || item.quantidade >= item.produto.quantidadeEstoque}
+                          onClick={() => aoAlterarQuantidade(item.produto.id, item.quantidade + 1)}
+                          aria-label="Aumentar quantidade"
+                        >
+                          +
+                        </button>
+                      </div>
+                    )}
                     <span className="item-total">{formatarBRL(item.precoItem)}</span>
                   </div>
                 </div>
@@ -130,37 +141,38 @@ export function PainelCarrinho({
             {carrinho.cupom ? (
               <div className="cupom-aplicado">
                 <span className="cupom-chip">
+                  <IconeCupom />
                   {carrinho.cupom.codigoCupom} · −{carrinho.cupom.percentualDesconto}%
                 </span>
-                <button type="button" className="botao-remover" disabled={ocupado} onClick={aoRemoverCupom}>
-                  remover cupom
+                <button type="button" className="botao-texto" disabled={ocupado} onClick={aoRemoverCupom}>
+                  remover
                 </button>
               </div>
             ) : (
-              <form className="form-cupom" onSubmit={enviarCupom}>
-                <input
-                  type="text"
-                  placeholder="Cupom de desconto"
-                  value={codigoCupom}
-                  onChange={(evento) => setCodigoCupom(evento.target.value)}
-                  disabled={ocupado}
-                  aria-label="Código do cupom"
-                />
-                <button type="submit" disabled={ocupado || codigoCupom.trim() === ''}>
-                  Aplicar
-                </button>
-              </form>
-            )}
-            {!carrinho.cupom && (
-              <p className="cupom-dica">
-                Disponíveis:{' '}
-                <button type="button" className="cupom-sugestao" onClick={() => aoAplicarCupom('10OFF')}>
-                  10OFF
-                </button>{' '}
-                <button type="button" className="cupom-sugestao" onClick={() => aoAplicarCupom('15OFF')}>
-                  15OFF
-                </button>
-              </p>
+              <>
+                <form className="form-cupom" onSubmit={enviarCupom}>
+                  <input
+                    type="text"
+                    placeholder="Cupom de desconto"
+                    value={codigoCupom}
+                    onChange={(evento) => setCodigoCupom(evento.target.value)}
+                    disabled={ocupado}
+                    aria-label="Código do cupom"
+                  />
+                  <button type="submit" disabled={ocupado || codigoCupom.trim() === ''}>
+                    Aplicar
+                  </button>
+                </form>
+                <p className="cupom-dica">
+                  Disponíveis:
+                  <button type="button" className="cupom-sugestao" disabled={ocupado} onClick={() => aoAplicarCupom('10OFF')}>
+                    10OFF
+                  </button>
+                  <button type="button" className="cupom-sugestao" disabled={ocupado} onClick={() => aoAplicarCupom('15OFF')}>
+                    15OFF
+                  </button>
+                </p>
+              </>
             )}
           </div>
         )}

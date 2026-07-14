@@ -4,3 +4,4 @@ dist/
 *.local
 .embedded-postgres/
 coverage/
+*.tsbuildinfo
