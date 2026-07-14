@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Catálogo de produtos (seed a partir de catalogoProdutos.json)
+model Produto {
+  id                Int            @id
+  descricaoProduto  String         @map("descricao_produto")
+  quantidadeEstoque Int            @map("quantidade_estoque")
+  precoLiquido      Decimal        @map("preco_liquido") @db.Decimal(10, 2)
+  itens             CarrinhoItem[]
+
+  @@map("produto")
+}
+
+/// Cupons de desconto (seed a partir de cupons.json)
+model Cupom {
+  id                 Int        @id
+  codigoCupom        String     @unique @map("codigo_cupom")
+  percentualDesconto Decimal    @map("percentual_desconto") @db.Decimal(5, 2)
+  carrinhos          Carrinho[]
+
+  @@map("cupom")
+}
+
+enum StatusCarrinho {
+  ABERTO
+  FINALIZADO
+
+  @@map("status_carrinho")
+}
+
+model Carrinho {
+  id           Int            @id @default(autoincrement())
+  status       StatusCarrinho @default(ABERTO)
+  cupom        Cupom?         @relation(fields: [cupomId], references: [id])
+  cupomId      Int?           @map("cupom_id")
+  subtotal     Decimal        @default(0) @db.Decimal(12, 2)
+  desconto     Decimal        @default(0) @db.Decimal(12, 2)
+  total        Decimal        @default(0) @db.Decimal(12, 2)
+  criadoEm     DateTime       @default(now()) @map("criado_em")
+  atualizadoEm DateTime       @updatedAt @map("atualizado_em")
+  itens        CarrinhoItem[]
+
+  @@map("carrinho")
+}
+
+model CarrinhoItem {
+  id         Int      @id @default(autoincrement())
+  carrinho   Carrinho @relation(fields: [carrinhoId], references: [id], onDelete: Cascade)
+  carrinhoId Int      @map("carrinho_id")
+  produto    Produto  @relation(fields: [produtoId], references: [id])
+  produtoId  Int      @map("produto_id")
+  quantidade Int
+  precoItem  Decimal  @map("preco_item") @db.Decimal(12, 2)
+
+  @@unique([carrinhoId, produtoId])
+  @@map("carrinho_item")
+}
