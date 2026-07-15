@@ -167,8 +167,10 @@ Toda falha de negócio retorna `{ "erro": { "codigo", "mensagem" } }`:
 8. **Front-end sem lib de UI.** CSS autoral com design system próprio
    (paleta verde-floresta/bege, botões pill, tipografia Manrope + Inter
    self-hosted via `@fontsource` — nada é baixado em runtime). Como o
-   catálogo não tem fotos, cada produto ganhou uma **ilustração SVG autoral**
-   por categoria. Busca e ordenação do catálogo são client-side (o catálogo é
+   catálogo não tem fotos, cada produto ganhou uma imagem ilustrativa de
+   catálogo de varejo servida localmente (`public/produtos/`), com
+   **fallback para uma ilustração SVG autoral** por categoria caso o arquivo
+   falte. Busca e ordenação do catálogo são client-side (o catálogo é
    pequeno); já o estado do carrinho vem sempre da resposta da API — o front
    nunca calcula totais, só exibe (fonte única da verdade no back).
 

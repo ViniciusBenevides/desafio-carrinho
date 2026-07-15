@@ -498,6 +498,14 @@ h3 {
   transition: all var(--transicao);
 }
 
+/* foto real: ocupa mais área e o fundo branco se funde ao cinza do card */
+img.cartao-ilustracao {
+  width: 82%;
+  height: 82%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
 /* hover do template: a imagem do produto ganha zoom (deal-image) */
 .cartao-produto:hover .cartao-ilustracao {
   transform: scale(1.12);
@@ -752,6 +760,13 @@ h3 {
 .item-ilustracao {
   width: 48px;
   height: 48px;
+}
+
+img.item-ilustracao {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
 }
 
 .item-detalhes {

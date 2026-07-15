@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { formatarBRL } from '../api';
 import type { Carrinho } from '../tipos';
 import { IconeCheck, IconeCupom, IconeFechar, IconeLixeira } from './Icones';
-import { IlustracaoProduto } from './Ilustracoes';
+import { ImagemProduto } from './ImagemProduto';
 
 interface Props {
   carrinho: Carrinho;
@@ -84,7 +84,11 @@ export function PainelCarrinho({
             {carrinho.itens.map((item) => (
               <li className="item-carrinho" key={item.produto.id}>
                 <div className="item-miniatura">
-                  <IlustracaoProduto descricao={item.produto.descricaoProduto} className="item-ilustracao" />
+                  <ImagemProduto
+                    produtoId={item.produto.id}
+                    descricao={item.produto.descricaoProduto}
+                    className="item-ilustracao"
+                  />
                 </div>
 
                 <div className="item-detalhes">

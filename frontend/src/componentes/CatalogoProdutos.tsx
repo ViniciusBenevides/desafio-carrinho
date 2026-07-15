@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 import { formatarBRL } from '../api';
 import type { Produto } from '../tipos';
-import { IlustracaoHero, IlustracaoProduto } from './Ilustracoes';
+import { IlustracaoHero } from './Ilustracoes';
+import { ImagemProduto } from './ImagemProduto';
 
 type Ordenacao = 'relevancia' | 'menor-preco' | 'maior-preco' | 'nome';
 
@@ -110,7 +111,11 @@ export function CatalogoProdutos({
             return (
               <article className="cartao-produto" key={produto.id}>
                 <div className="cartao-visual">
-                  <IlustracaoProduto descricao={produto.descricaoProduto} className="cartao-ilustracao" />
+                  <ImagemProduto
+                    produtoId={produto.id}
+                    descricao={produto.descricaoProduto}
+                    className="cartao-ilustracao"
+                  />
                   {(poucoEstoque || esgotado) && (
                     <span className={`selo-estoque${esgotado ? ' selo-esgotado' : ''}`}>
                       {esgotado ? 'Esgotado' : `Últimas ${produto.quantidadeEstoque} un.`}
