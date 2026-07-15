@@ -165,12 +165,12 @@ Toda falha de negócio retorna `{ "erro": { "codigo", "mensagem" } }`:
    inexistente retorna `422` sem alterar o estado do carrinho.
 
 8. **Front-end sem lib de UI.** CSS autoral com design system próprio
-   (paleta verde-floresta/bege, botões pill, Inter self-hosted via
-   `@fontsource` — nada é baixado em runtime). Como o catálogo não tem fotos,
-   cada produto ganhou uma **ilustração SVG autoral** por categoria. Busca e
-   ordenação do catálogo são client-side (o catálogo é pequeno); já o estado
-   do carrinho vem sempre da resposta da API — o front nunca calcula totais,
-   só exibe (fonte única da verdade no back).
+   (paleta verde-floresta/bege, botões pill, tipografia Manrope + Inter
+   self-hosted via `@fontsource` — nada é baixado em runtime). Como o
+   catálogo não tem fotos, cada produto ganhou uma **ilustração SVG autoral**
+   por categoria. Busca e ordenação do catálogo são client-side (o catálogo é
+   pequeno); já o estado do carrinho vem sempre da resposta da API — o front
+   nunca calcula totais, só exibe (fonte única da verdade no back).
 
 9. **Carrinho retomado por `localStorage`.** O front guarda o `carrinhoId` e
    retoma o carrinho aberto ao recarregar a página; carrinho finalizado em

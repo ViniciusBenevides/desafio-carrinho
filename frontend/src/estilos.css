@@ -1,37 +1,42 @@
 /* ==========================================================================
    Shopcart — design system do teste técnico
-   Referência visual: template Shopcart (verde-floresta sobre branco, bege
-   nos destaques, botões pill). Tipografia: Inter (self-hosted, @fontsource).
+   Tokens extraídos do template Shopcart (Webflow): --primary-color #003d29,
+   --heading-color #231f1e, --linen, --white-smoke, --light-cyan, --misty-rose;
+   acentos coral #ff5c4c e dourado #cb9917; movimento "all .2s" com hovers de
+   escala. Tipografia: Manrope (display, substituta livre da Eina do template)
+   + Inter (texto) — ambas self-hosted via @fontsource.
    ========================================================================== */
 
 :root {
   --verde-950: #012219;
-  --verde-900: #003d29;
-  --verde-700: #0c5138;
-  --verde-claro: #3bb77e;
-  --menta: #d2f7ec;
-  --bege: #f2e4d9;
+  --verde-900: #003d29; /* --primary-color */
+  --menta: #d2f7ec; /* --light-cyan */
+  --bege: #f2e4d9; /* --linen */
   --pessego: #ffe6cc;
   --pessego-escuro: #7a3d00;
-  --tinta: #0e0f18;
-  --cinza-700: #3d4a45;
+  --rosa: #f9dcdc; /* --misty-rose */
+  --coral: #ff5c4c;
+  --dourado: #cb9917;
+  --tinta: #231f1e; /* --heading-color */
+  --texto: #333333;
   --cinza-500: #5d6c7b;
   --cinza-400: #9aa4ad;
+  --cinza-pill: #c5c5c5;
   --cinza-borda: #e6e6e6;
-  --cinza-fundo: #f5f6f6;
+  --cinza-fundo: #f5f6f6; /* --white-smoke */
   --erro: #c0223b;
-  --erro-100: #ffdede;
+  --verde-claro: #3bb77e;
   --branco: #ffffff;
 
   --fonte: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --fonte-display: 'Manrope', 'Inter', system-ui, sans-serif;
 
   --raio-sm: 10px;
   --raio-md: 14px;
   --raio-lg: 24px;
   --raio-pill: 100px;
-  --sombra-suave: 0 1px 2px rgba(14, 15, 24, 0.05), 0 6px 20px rgba(14, 15, 24, 0.06);
   --sombra-alta: 0 10px 24px rgba(14, 15, 24, 0.12), 0 24px 60px rgba(14, 15, 24, 0.18);
-  --transicao: 180ms cubic-bezier(0.35, 0, 0.2, 1);
+  --transicao: 0.2s ease;
 }
 
 * {
@@ -46,9 +51,9 @@ html {
 
 body {
   font-family: var(--fonte);
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.5;
-  color: var(--tinta);
+  color: var(--texto);
   background: var(--branco);
   min-height: 100vh;
 }
@@ -76,8 +81,9 @@ select {
 h1,
 h2,
 h3 {
-  letter-spacing: -0.02em;
-  line-height: 1.15;
+  font-family: var(--fonte-display);
+  color: var(--tinta);
+  line-height: 1.2;
 }
 
 /* ---------- marca ---------- */
@@ -86,9 +92,10 @@ h3 {
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  font-family: var(--fonte-display);
   font-size: 24px;
   font-weight: 800;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   color: var(--tinta);
   text-decoration: none;
 }
@@ -136,7 +143,7 @@ h3 {
 }
 
 .faixa-conteudo {
-  max-width: 1240px;
+  max-width: 1360px;
   margin: 0 auto;
   padding: 8px 24px;
   display: flex;
@@ -168,7 +175,7 @@ h3 {
 }
 
 .barra-principal {
-  max-width: 1240px;
+  max-width: 1360px;
   margin: 0 auto;
   padding: 14px 24px;
   display: flex;
@@ -186,11 +193,17 @@ h3 {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 500;
+  letter-spacing: 0.25px;
   color: var(--tinta);
   white-space: nowrap;
   cursor: default;
+  transition: color var(--transicao);
+}
+
+.nav-item:hover {
+  color: rgba(35, 31, 30, 0.72);
 }
 
 .campo-busca {
@@ -288,36 +301,37 @@ h3 {
 
 .botao-primario,
 .botao-fantasma {
-  border-radius: var(--raio-pill);
-  padding: 13px 26px;
+  border-radius: 50px;
+  padding: 14px 32px;
+  font-family: var(--fonte-display);
   font-size: 15px;
-  font-weight: 600;
-  transition:
-    background var(--transicao),
-    color var(--transicao),
-    border-color var(--transicao),
-    transform var(--transicao);
+  font-weight: 700;
+  transition: all var(--transicao);
 }
 
 .botao-primario {
   background: var(--verde-900);
   color: var(--branco);
-  border: 1.5px solid var(--verde-900);
+  border: 1px solid var(--verde-900);
 }
 
+/* hover do template: botão primário escala e vai para o preto quente */
 .botao-primario:hover:not(:disabled) {
-  background: var(--verde-700);
-  border-color: var(--verde-700);
+  background: var(--tinta);
+  border-color: var(--tinta);
+  transform: scale(1.05);
 }
 
 .botao-fantasma {
   background: transparent;
-  color: var(--verde-900);
-  border: 1.5px solid var(--verde-900);
+  color: var(--tinta);
+  border: 1px solid var(--tinta);
 }
 
 .botao-fantasma:hover:not(:disabled) {
-  background: rgba(0, 61, 41, 0.08);
+  background: var(--tinta);
+  color: var(--branco);
+  transform: scale(1.05);
 }
 
 .botao-primario:disabled,
@@ -331,7 +345,7 @@ h3 {
   margin-top: 28px;
   background: var(--bege);
   border-radius: var(--raio-lg);
-  padding: clamp(32px, 5vw, 56px) clamp(28px, 5vw, 64px);
+  padding: clamp(36px, 5vw, 62px) clamp(28px, 5vw, 64px);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -339,9 +353,10 @@ h3 {
 }
 
 .hero h1 {
-  font-size: clamp(28px, 3.6vw, 42px);
+  font-size: clamp(30px, 3.8vw, 48px);
   font-weight: 800;
   color: var(--verde-900);
+  line-height: 1.16;
 }
 
 .hero h1 em {
@@ -352,7 +367,7 @@ h3 {
 .hero-texto p {
   margin-top: 14px;
   font-size: 16px;
-  color: var(--cinza-700);
+  color: var(--texto);
   max-width: 46ch;
 }
 
@@ -367,6 +382,17 @@ h3 {
   width: clamp(170px, 24vw, 280px);
   height: auto;
   flex-shrink: 0;
+  animation: flutuar 5s ease-in-out infinite;
+}
+
+@keyframes flutuar {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
 }
 
 /* ---------- barra do catálogo ---------- */
@@ -381,8 +407,10 @@ h3 {
 }
 
 .catalogo-titulo {
-  font-size: 23px;
+  font-family: var(--fonte-display);
+  font-size: 26px;
   font-weight: 700;
+  color: var(--tinta);
 }
 
 .titulo-busca {
@@ -399,14 +427,19 @@ h3 {
 }
 
 .seletor-ordenacao select {
-  border: 1px solid var(--cinza-borda);
+  border: 1px solid var(--cinza-pill);
   border-radius: var(--raio-pill);
   background: var(--branco);
-  padding: 9px 14px;
+  padding: 10px 16px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--tinta);
   cursor: pointer;
+  transition: all var(--transicao);
+}
+
+.seletor-ordenacao select:hover {
+  border-color: var(--tinta);
 }
 
 .catalogo-vazio {
@@ -462,11 +495,12 @@ h3 {
 .cartao-ilustracao {
   width: 60%;
   height: auto;
-  transition: transform var(--transicao);
+  transition: all var(--transicao);
 }
 
+/* hover do template: a imagem do produto ganha zoom (deal-image) */
 .cartao-produto:hover .cartao-ilustracao {
-  transform: translateY(-4px) scale(1.04);
+  transform: scale(1.12);
 }
 
 .selo-estoque,
@@ -486,7 +520,7 @@ h3 {
 }
 
 .selo-estoque.selo-esgotado {
-  background: var(--erro-100);
+  background: var(--rosa);
   color: var(--erro);
 }
 
@@ -511,14 +545,17 @@ h3 {
 }
 
 .cartao-nome {
-  font-size: 15px;
+  font-family: var(--fonte);
+  font-size: 16px;
   font-weight: 600;
+  color: var(--tinta);
   line-height: 1.35;
 }
 
 .cartao-preco {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
+  color: var(--tinta);
   white-space: nowrap;
 }
 
@@ -528,25 +565,23 @@ h3 {
   color: var(--cinza-500);
 }
 
+/* pill do template (product-tab-link/cart-button): borda cinza, preenche escuro */
 .botao-adicionar {
   margin-top: 14px;
   align-self: flex-start;
-  border: 1.5px solid var(--tinta);
+  border: 1px solid var(--cinza-pill);
   border-radius: var(--raio-pill);
   background: var(--branco);
   color: var(--tinta);
-  padding: 9px 20px;
+  padding: 11px 22px;
   font-size: 14px;
   font-weight: 600;
-  transition:
-    background var(--transicao),
-    color var(--transicao),
-    border-color var(--transicao);
+  transition: all var(--transicao);
 }
 
 .botao-adicionar:hover:not(:disabled) {
-  background: var(--verde-900);
-  border-color: var(--verde-900);
+  background: var(--tinta);
+  border-color: var(--tinta);
   color: var(--branco);
 }
 
@@ -736,6 +771,7 @@ h3 {
 .item-nome {
   font-size: 14px;
   font-weight: 600;
+  color: var(--tinta);
   line-height: 1.35;
 }
 
@@ -757,7 +793,7 @@ h3 {
 
 .botao-remover-item:hover:not(:disabled) {
   color: var(--erro);
-  background: var(--erro-100);
+  background: var(--rosa);
 }
 
 .item-unitario {
@@ -777,6 +813,7 @@ h3 {
 .item-total {
   font-size: 14.5px;
   font-weight: 700;
+  color: var(--tinta);
 }
 
 .item-qtd-fixa {
@@ -943,12 +980,13 @@ h3 {
   justify-content: space-between;
   padding: 5px 0;
   font-size: 14.5px;
-  color: var(--cinza-700);
+  color: var(--texto);
 }
 
+/* como o discount-price do template: valor de desconto em dourado */
 .linha-desconto dd {
-  color: var(--verde-900);
-  font-weight: 600;
+  color: var(--dourado);
+  font-weight: 700;
 }
 
 .linha-final {
@@ -962,19 +1000,18 @@ h3 {
   margin-top: 16px;
   width: 100%;
   border: none;
-  border-radius: var(--raio-pill);
+  border-radius: 50px;
   background: var(--verde-900);
   color: var(--branco);
-  padding: 15px;
-  font-size: 15.5px;
+  padding: 16px;
+  font-family: var(--fonte-display);
+  font-size: 16px;
   font-weight: 700;
-  transition:
-    background var(--transicao),
-    transform var(--transicao);
+  transition: all var(--transicao);
 }
 
 .botao-finalizar:hover:not(:disabled) {
-  background: var(--verde-700);
+  background: var(--tinta);
 }
 
 .botao-finalizar:active:not(:disabled) {
@@ -1044,7 +1081,7 @@ h3 {
 }
 
 .rodape-conteudo {
-  max-width: 1240px;
+  max-width: 1360px;
   margin: 0 auto;
   padding: 52px 24px 40px;
   display: flex;
@@ -1071,11 +1108,18 @@ h3 {
   margin-bottom: 14px;
 }
 
+/* hover do template (list-item): desliza 10px e fica coral */
 .rodape-colunas span {
   display: block;
   font-size: 14px;
   margin-bottom: 10px;
   cursor: default;
+  transition: all var(--transicao);
+}
+
+.rodape-colunas span:hover {
+  color: var(--coral);
+  transform: translateX(10px);
 }
 
 .rodape-base {
@@ -1089,9 +1133,9 @@ h3 {
 /* ---------- layout geral ---------- */
 
 .conteudo {
-  max-width: 1240px;
+  max-width: 1360px;
   margin: 0 auto;
-  padding: 0 24px 72px;
+  padding: 0 24px 80px;
 }
 
 /* ---------- responsivo ---------- */
